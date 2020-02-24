@@ -138,7 +138,7 @@ but the over all logic works great!
 ## Yates
 ![dwd7-yates](dwd7-yates.png)
 
-Please see code here: https://github.com/bsehgol/dwd-api-nyc-health/blob/master/index5.html
+Please see code here: [github](https://github.com/bsehgol/dwd-api-nyc-health/blob/master/index5.html)
 
 
 
