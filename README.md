@@ -139,7 +139,9 @@ but the over all logic works great!
 ![dwd7-yates](dwd7-yates.png)
 
 Please see code here: [github](https://github.com/bsehgol/dwd-api-nyc-health/blob/master/index5.html)
-
+ 
+ 
+Simply download and run index5.html and run it on your browser. Select the county from the drop down to see live data charted.
 
 
 
