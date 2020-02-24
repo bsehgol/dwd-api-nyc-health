@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script> <!--Optional-->
+
+    <canvas id="myChart" width="740" height="200"></canvas>
+
+    <script>
+        var county = []
+        var weight = []
+        var births = []
+        var selValue  
+        var select
+        var opt
+        var el
+
+        //get data on live birth by birth weight in 2017 (latest available)
+        fetch('https://health.data.ny.gov/resource/b3b6-bu6t.json?year=2017')
+        .then(response => {
+            return response.json()
+        })
+        .then(data => {
+            console.log(data)
+            
+            //destructure data 
+            // const [{county: county}, {category_description: weight}, {value: births }] = data
+            var countyAll = data.map(({county}) => county)
+            let county = [...new Set(countyAll)];
+
+            // weight = data.map(({category_description}) => weight)
+            // births = data.map(({value}) => births)
+            // data.map(o => o.category_description)
+            //if county name == bronx
+            for (var i = 0; i < data.length; ++i){
+                if (data[i].county == "Putnam"){
+                    weight.push(data[i].category_description)
+                    births.push(data[i].value)                   
+                    
+                    // console.log(i)
+                    // console.log(data[i])
+                    // // arr.map(o => o.val)
+                    // // weight = data[i].map(o => o.category_description)
+                    // // births = data[i].map(o => o.value)
+
+                    // // births = data[i].map(({value}) => births)
+                    
+                }
+                
+            }
+            weight.pop()
+            births.pop()
+            births.reverse()
+            weight.reverse()
+
+            addData(myChart, births)
+            
+            // put county data in dropdown
+           
+                select = document.getElementById("selectCounty");
+                for(var i = 0; i < county.length; i++) {
+                     opt = county[i];
+                     el = document.createElement("option");
+                    el.textContent = opt;
+                    el.text = opt;
+                    select.appendChild(el);                                    
+                }
+                console.log(document.getElementById("selectCounty").options[document.getElementById('selectCounty').selectedOptions].text)
+                // console.log(document.getElementById('selectCounty'))
+        })
+        .catch(err => { 
+            return err
+        })
+
+      
+        //update data in chart
+        function addData(chart, data, label) {
+            chart.data.labels.push(label);
+            chart.data.datasets.forEach((dataset) => {
+                dataset.data.push(data);
+        });
+            chart.update();
+        }
+        
+        //create chart
+
+        // Get the context of the canvas element we want to select
+        var ctx = document.getElementById("myChart").getContext("2d");
+        // Instantiate a new chart using 'data' (defined below)
+        var myChart = new Chart(ctx , {
+
+            type: "line",
+            data: {
+                labels: weight,
+                datasets: [{
+                    label: county,
+                    fill: false,
+                    backgroundColor: 'rgb(255, 99, 132)',                    
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: births
+                }]
+            }, 
+            options: {
+                scales: {
+                    xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'weight/ grams'
+                    }
+                    }]
+                }
+            }
+            });
+
+        
+    </script>
+
+</head>
+<body>
+    <select id="selectCounty">
+        <option>Choose a County</option>
+    </select>
+</body>
+</html>

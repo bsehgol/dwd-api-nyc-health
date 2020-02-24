@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script> <!--Optional-->
+
+    <canvas id="myChart" width="740" height="200"></canvas>
+
+    <script>
+        var kings = []
+        var weight = []
+        var births = []
+        //get data on live birth by birth weight in 2017 (latest available)
+        fetch('https://health.data.ny.gov/resource/b3b6-bu6t.json?year=2017')
+        .then(response => {
+            return response.json()
+        })
+        .then(data => {
+            console.log(data)
+            // narrow to Brooklyn data, kingsCounty data is between 549-557
+            for (var i=549; i < 558; ++i){
+                kings.push(data[i])                 
+
+            }
+            // console.log(kings)
+            for (var j=0; j < kings.length; ++j){
+                weight.push(kings[j].category_description) 
+                births.push(kings[j].value)
+    
+            }
+            weight.pop()
+            births.pop()
+            births.reverse()
+            weight.reverse()
+   
+            addData(myChart, births)
+
+        })
+        .catch(err => {
+            return err
+        })
+        function addData(chart, data, label) {
+            chart.data.labels.push(label);
+            chart.data.datasets.forEach((dataset) => {
+                dataset.data.push(data);
+        });
+            chart.update();
+        }
+
+        // Get the context of the canvas element we want to select
+        var ctx = document.getElementById("myChart").getContext("2d");
+        // Instantiate a new chart using 'data' (defined below)
+        var myChart = new Chart(ctx , {
+
+            type: "line",
+            data: {
+                labels: weight,
+                datasets: [{
+                    label: 'Kings County',
+                    fill: false,
+                    backgroundColor: 'rgb(255, 99, 132)',                    
+                    borderColor: 'rgb(255, 99, 132)',
+                    data: births
+                }]
+            }, 
+            options: {
+                scales: {
+                    xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'weight/ grams'
+                    }
+                    }]
+                }
+            }
+            });
+
+        
+    </script>
+
+</head>
+</html>
